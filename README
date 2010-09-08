@@ -1,0 +1,18 @@
+Cactus Code Thorn libjpeg
+Author(s)    : Frank Löffler
+               Erik Schnetter
+Maintainer(s): Cactus team
+Licence      : ?
+--------------------------------------------------------------------------
+
+1. Purpose
+
+Distribute the libjpeg library; see <http://www.ijg.org/>
+
+
+
+From the web site:
+
+IJG is an informal group that writes and distributes a widely used free library for JPEG image compression.
+
+The current version is release 8b of 16-May-2010. This is a stable and solid foundation for many application's JPEG support. 
