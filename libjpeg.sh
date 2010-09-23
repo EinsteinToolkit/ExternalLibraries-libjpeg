@@ -35,6 +35,9 @@ unset LIBS
     else
         echo "libjpeg: Building enclosed libjpeg library"
         
+        # Should we use gmake or make?
+        MAKE=$(gmake --help > /dev/null 2>&1 && echo gmake || echo make)
+        
         echo "libjpeg: Unpacking archive..."
         rm -rf build-${NAME}
         mkdir build-${NAME}
@@ -51,10 +54,10 @@ unset LIBS
         ./configure --prefix=${LIBJPEG_DIR}
         
         echo "libjpeg: Building..."
-        make
+        ${MAKE}
         
         echo "libjpeg: Installing..."
-        make install
+        ${MAKE} install
         popd
         
         echo 'done' > done-${NAME}
