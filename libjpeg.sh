@@ -8,28 +8,33 @@
 set -x                          # Output commands
 set -e                          # Abort on errors
 
-# Set locations
-NAME=jpeg-8b
-SRCDIR=$(dirname $0)
-INSTALL_DIR=${SCRATCH_BUILD}
-LIBJPEG_DIR=${INSTALL_DIR}/${NAME}
-
-# Clean up environment
-unset LIBS
-
 
 
 ################################################################################
 # Build
 ################################################################################
 
+if [ -z "${LIBJPEG_DIR}" -o "${LIBJPEG_DIR}" = 'BUILD' ]; then
+    echo "BEGIN MESSAGE"
+    echo "Building libjpeg..."
+    echo "END MESSAGE"
+
+    # Set locations
+    THORN=libjpeg
+    NAME=jpeg-8b
+    SRCDIR=$(dirname $0)
+    BUILD_DIR=${SCRATCH_BUILD}/build/${THORN}
+    INSTALL_DIR=${SCRATCH_BUILD}/external/${THORN}
+    DONE_FILE=${SCRATCH_BUILD}/done/${THORN}
+    LIBJPEG_DIR=${INSTALL_DIR}
+
 (
     exec >&2                    # Redirect stdout to stderr
     set -x                      # Output commands
     set -e                      # Abort on errors
-    cd ${INSTALL_DIR}
-    if [ -e done-${NAME} -a done-${NAME} -nt ${SRCDIR}/dist/${NAME}.tar.gz \
-                         -a done-${NAME} -nt ${SRCDIR}/libjpeg.sh ]
+    cd ${SCRATCH_DIR}
+    if [ -e ${DONE_FILE} -a ${DONE_FILE} -nt ${SRCDIR}/dist/${NAME}.tar.gz \
+                         -a ${DONE_FILE} -nt ${SRCDIR}/libjpeg.sh ]
     then
         echo "libjpeg: The enclosed libjpeg library has already been built; doing nothing"
     else
@@ -37,20 +42,23 @@ unset LIBS
         
         # Should we use gmake or make?
         MAKE=$(gmake --help > /dev/null 2>&1 && echo gmake || echo make)
-        
-        echo "libjpeg: Unpacking archive..."
-        rm -rf build-${NAME}
-        mkdir build-${NAME}
-        pushd build-${NAME}
         # Should we use gtar or tar?
         TAR=$(gtar --help > /dev/null 2> /dev/null && echo gtar || echo tar)
-        ${TAR} xzf ${SRCDIR}/dist/${NAME}.tar.gz
-        popd
         
+        # Set up environment
+        unset LIBS
+
+        echo "libjpeg: Preparing directory structure..."
+        mkdir build external done 2> /dev/null || true
+        rm -rf ${BUILD_DIR} ${INSTALL_DIR}
+        mkdir ${BUILD_DIR} ${INSTALL_DIR}
+
+        echo "libjpeg: Unpacking archive..."
+        pushd ${BUILD_DIR}
+        ${TAR} xzf ${SRCDIR}/dist/${NAME}.tar.gz
+
         echo "libjpeg: Configuring..."
-        rm -rf ${NAME}
-        mkdir ${NAME}
-        pushd build-${NAME}/${NAME}
+        cd ${NAME}
         ./configure --prefix=${LIBJPEG_DIR}
         
         echo "libjpeg: Building..."
@@ -60,16 +68,20 @@ unset LIBS
         ${MAKE} install
         popd
         
-        echo 'done' > done-${NAME}
+        echo "libjpeg: Cleaning up..."
+        rm -rf ${BUILD_DIR}
+
+        date > ${DONE_FILE}
         echo "libjpeg: Done."
     fi
 )
 
-if (( $? )); then
-    echo 'BEGIN ERROR'
-    echo 'Error while building libjpeg.  Aborting.'
-    echo 'END ERROR'
-    exit 1
+    if (( $? )); then
+        echo 'BEGIN ERROR'
+        echo 'Error while building libjpeg.  Aborting.'
+        echo 'END ERROR'
+        exit 1
+    fi
 fi
 
 
