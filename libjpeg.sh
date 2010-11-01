@@ -32,7 +32,7 @@ if [ -z "${LIBJPEG_DIR}" -o "${LIBJPEG_DIR}" = 'BUILD' ]; then
     exec >&2                    # Redirect stdout to stderr
     set -x                      # Output commands
     set -e                      # Abort on errors
-    cd ${SCRATCH_DIR}
+    cd ${SCRATCH_BUILD}
     if [ -e ${DONE_FILE} -a ${DONE_FILE} -nt ${SRCDIR}/dist/${NAME}.tar.gz \
                          -a ${DONE_FILE} -nt ${SRCDIR}/libjpeg.sh ]
     then
