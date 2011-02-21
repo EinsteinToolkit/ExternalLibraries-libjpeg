@@ -21,7 +21,7 @@ if [ -z "${LIBJPEG_DIR}" -o "${LIBJPEG_DIR}" = 'BUILD' ]; then
 
     # Set locations
     THORN=libjpeg
-    NAME=jpeg-8b
+    NAME=jpeg-8c
     SRCDIR=$(dirname $0)
     BUILD_DIR=${SCRATCH_BUILD}/build/${THORN}
     INSTALL_DIR=${SCRATCH_BUILD}/external/${THORN}
