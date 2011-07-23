@@ -24,7 +24,17 @@ if [ -z "${LIBJPEG_DIR}" -o "${LIBJPEG_DIR}" = 'BUILD' ]; then
     NAME=jpeg-8c
     SRCDIR=$(dirname $0)
     BUILD_DIR=${SCRATCH_BUILD}/build/${THORN}
-    INSTALL_DIR=${SCRATCH_BUILD}/external/${THORN}
+    if [ -z "${LIBJPEG_INSTALL_DIR}" ]; then
+        echo "BEGIN MESSAGE"
+        echo "LIBJPEG install directory, LIBJPEG_INSTALL_DIR, not set. Installing in the default configuration location. "
+        echo "END MESSAGE"
+     INSTALL_DIR=${SCRATCH_BUILD}/external/${THORN}
+    else
+        echo "BEGIN MESSAGE"
+        echo "LIBJPEG install directory, LIBJPEG_INSTALL_DIR, selected. Installing LIBJPEG at ${LIBJPEG_INSTALL_DIR} "
+        echo "END MESSAGE"
+     INSTALL_DIR=${LIBJPEG_INSTALL_DIR}
+    fi
     DONE_FILE=${SCRATCH_BUILD}/done/${THORN}
     LIBJPEG_DIR=${INSTALL_DIR}
 
