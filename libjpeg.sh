@@ -14,7 +14,9 @@ set -e                          # Abort on errors
 # Build
 ################################################################################
 
-if [ -z "${LIBJPEG_DIR}" -o "${LIBJPEG_DIR}" = 'BUILD' ]; then
+if [ -z "${LIBJPEG_DIR}"                                                \
+     -o "$(echo "${LIBJPEG_DIR}" | tr '[a-z]' '[A-Z]')" = 'BUILD' ]
+then
     echo "BEGIN MESSAGE"
     echo "Building libjpeg..."
     echo "END MESSAGE"
