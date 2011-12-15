@@ -5,7 +5,9 @@
 ################################################################################
 
 # Set up shell
-set -x                          # Output commands
+if [ "$(echo ${VERBOSE} | tr '[:upper:]' '[:lower:]')" = 'yes' ]; then
+    set -x                      # Output commands
+fi
 set -e                          # Abort on errors
 
 
@@ -27,39 +29,42 @@ then
     SRCDIR=$(dirname $0)
     BUILD_DIR=${SCRATCH_BUILD}/build/${THORN}
     if [ -z "${LIBJPEG_INSTALL_DIR}" ]; then
-        echo "BEGIN MESSAGE"
-        echo "LIBJPEG install directory, LIBJPEG_INSTALL_DIR, not set. Installing in the default configuration location. "
-        echo "END MESSAGE"
-     INSTALL_DIR=${SCRATCH_BUILD}/external/${THORN}
+        INSTALL_DIR=${SCRATCH_BUILD}/external/${THORN}
     else
         echo "BEGIN MESSAGE"
-        echo "LIBJPEG install directory, LIBJPEG_INSTALL_DIR, selected. Installing LIBJPEG at ${LIBJPEG_INSTALL_DIR} "
+        echo "Installing libjpeg into ${LIBJPEG_INSTALL_DIR}"
         echo "END MESSAGE"
-     INSTALL_DIR=${LIBJPEG_INSTALL_DIR}
+        INSTALL_DIR=${LIBJPEG_INSTALL_DIR}
     fi
     DONE_FILE=${SCRATCH_BUILD}/done/${THORN}
     LIBJPEG_DIR=${INSTALL_DIR}
-
-(
-    exec >&2                    # Redirect stdout to stderr
-    set -x                      # Output commands
-    set -e                      # Abort on errors
-    cd ${SCRATCH_BUILD}
+    
     if [ -e ${DONE_FILE} -a ${DONE_FILE} -nt ${SRCDIR}/dist/${NAME}.tar.gz \
                          -a ${DONE_FILE} -nt ${SRCDIR}/libjpeg.sh ]
     then
-        echo "libjpeg: The enclosed libjpeg library has already been built; doing nothing"
+        echo "BEGIN MESSAGE"
+        echo "libjpeg has already been built; doing nothing"
+        echo "END MESSAGE"
     else
-        echo "libjpeg: Building enclosed libjpeg library"
+        echo "BEGIN MESSAGE"
+        echo "Building libjpeg library"
+        echo "END MESSAGE"
         
-        # Should we use gmake or make?
-        MAKE=$(gmake --help > /dev/null 2>&1 && echo gmake || echo make)
-        # Should we use gtar or tar?
-        TAR=$(gtar --help > /dev/null 2> /dev/null && echo gtar || echo tar)
+        # Build in a subshell
+        (
+        exec >&2                # Redirect stdout to stderr
+        if [ "$(echo ${VERBOSE} | tr '[:upper:]' '[:lower:]')" = 'yes' ]; then
+            set -x              # Output commands
+        fi
+        set -e                  # Abort on errors
+        cd ${SCRATCH_BUILD}
         
         # Set up environment
         unset LIBS
-
+        if echo '' ${ARFLAGS} | grep 64 > /dev/null 2>&1; then
+            export OBJECT_MODE=64
+        fi
+        
         echo "libjpeg: Preparing directory structure..."
         mkdir build external done 2> /dev/null || true
         rm -rf ${BUILD_DIR} ${INSTALL_DIR}
@@ -85,15 +90,17 @@ then
 
         date > ${DONE_FILE}
         echo "libjpeg: Done."
+        
+        )
+        
+        if (( $? )); then
+            echo 'BEGIN ERROR'
+            echo 'Error while building libjpeg. Aborting.'
+            echo 'END ERROR'
+            exit 1
+        fi
     fi
-)
-
-    if (( $? )); then
-        echo 'BEGIN ERROR'
-        echo 'Error while building libjpeg.  Aborting.'
-        echo 'END ERROR'
-        exit 1
-    fi
+    
 fi
 
 
