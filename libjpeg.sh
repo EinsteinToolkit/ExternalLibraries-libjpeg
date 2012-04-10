@@ -10,6 +10,36 @@ if [ "$(echo ${VERBOSE} | tr '[:upper:]' '[:lower:]')" = 'yes' ]; then
 fi
 set -e                          # Abort on errors
 
+if [ -z "${LIBJPEG_DIR}" ]; then
+    echo "BEGIN MESSAGE"
+    echo "LIBJPEG selected, but LIBJPEG_DIR not set.  Checking some places..."
+    echo "END MESSAGE"
+    
+    FILES="include/jpeglib.h"
+    DIRS="/usr /usr/local ${HOME}"
+    for dir in $DIRS; do
+        LIBJPEG_DIR="$dir"
+        for file in $FILES; do
+            if [ ! -r "$dir/$file" ]; then
+                unset LIBJPEG_DIR
+                break
+            fi
+        done
+        if [ -n "$LIBJPEG_DIR" ]; then
+            break
+        fi
+    done
+    
+    if [ -z "$LIBJPEG_DIR" ]; then
+        echo "BEGIN MESSAGE"
+        echo "LIBJPEG not found"
+        echo "END MESSAGE"
+    else
+        echo "BEGIN MESSAGE"
+        echo "Found LIBJPEG in ${LIBJPEG_DIR}"
+        echo "END MESSAGE"
+    fi
+fi
 
 
 ################################################################################
