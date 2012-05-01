@@ -12,7 +12,7 @@ set -e                          # Abort on errors
 
 if [ -z "${LIBJPEG_DIR}" ]; then
     echo "BEGIN MESSAGE"
-    echo "LIBJPEG selected, but LIBJPEG_DIR not set.  Checking some places..."
+    echo "LIBJPEG selected, but LIBJPEG_DIR not set. Checking some places..."
     echo "END MESSAGE"
     
     FILES="include/jpeglib.h"
@@ -140,8 +140,13 @@ fi
 ################################################################################
 
 # Set options
-LIBJPEG_INC_DIRS="${LIBJPEG_DIR}/include"
-LIBJPEG_LIB_DIRS="${LIBJPEG_DIR}/lib"
+if [ "${LIBJPEG_DIR}" = '/usr' -o "${LIBJPEG_DIR}" = '/usr/local' ]; then
+    LIBJPEG_INC_DIRS=''
+    LIBJPEG_LIB_DIRS=''
+else
+    LIBJPEG_INC_DIRS="${LIBJPEG_DIR}/include"
+    LIBJPEG_LIB_DIRS="${LIBJPEG_DIR}/lib"
+fi
 LIBJPEG_LIBS='jpeg'
 
 # Pass options to Cactus
