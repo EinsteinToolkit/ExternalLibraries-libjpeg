@@ -70,7 +70,7 @@ then
     LIBJPEG_DIR=${INSTALL_DIR}
     
     if [ -e ${DONE_FILE} -a ${DONE_FILE} -nt ${SRCDIR}/dist/${NAME}.tar.gz \
-                         -a ${DONE_FILE} -nt ${SRCDIR}/libjpeg.sh ]
+                         -a ${DONE_FILE} -nt ${SRCDIR}/configure.sh ]
     then
         echo "BEGIN MESSAGE"
         echo "libjpeg has already been built; doing nothing"

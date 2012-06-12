@@ -2,7 +2,7 @@
 
 PROVIDES libjpeg
 {
-  SCRIPT libjpeg.sh
+  SCRIPT configure.sh
   LANG bash
   OPTIONS LIBJPEG_INSTALL_DIR
 }
