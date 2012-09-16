@@ -102,7 +102,7 @@ then
 
         echo "libjpeg: Unpacking archive..."
         pushd ${BUILD_DIR}
-        ${TAR} xzf ${SRCDIR}/dist/${NAME}.tar.gz
+        ${TAR?} xzf ${SRCDIR}/dist/${NAME}.tar.gz
 
         echo "libjpeg: Configuring..."
         cd ${NAME}
