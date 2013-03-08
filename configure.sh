@@ -120,7 +120,6 @@ then
 
         date > ${DONE_FILE}
         echo "libjpeg: Done."
-        
         )
         
         if (( $? )); then
