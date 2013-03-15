@@ -106,7 +106,7 @@ then
 
         echo "libjpeg: Configuring..."
         cd ${NAME}
-        ./configure --prefix=${LIBJPEG_DIR}
+        ./configure --prefix=${LIBJPEG_DIR} --enable-shared=no
         
         echo "libjpeg: Building..."
         ${MAKE}
