@@ -10,9 +10,7 @@ if [ "$(echo ${VERBOSE} | tr '[:upper:]' '[:lower:]')" = 'yes' ]; then
 fi
 set -e                          # Abort on errors
 
-if [ -z "${LIBJPEG_DIR}" \
-     -o "$(echo "${LIBJPEG_DIR}" | tr '[a-z]' '[A-Z]')" = 'NO_BUILD' ] 
-then
+if [ -z "${LIBJPEG_DIR}" ]; then
     echo "BEGIN MESSAGE"
     echo "LIBJPEG selected, but LIBJPEG_DIR not set. Checking some places..."
     echo "END MESSAGE"
