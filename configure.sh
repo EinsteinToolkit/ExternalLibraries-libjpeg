@@ -34,7 +34,6 @@ then
                 for file in $FILES; do
                     # discard this directory if one file was not found
                     if [ ! -r "$dir/$file" ]; then
-                        echo "$dir/$file"
                         unset LIBJPEG_DIR
                         break
                     fi
