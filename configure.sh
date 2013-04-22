@@ -10,21 +10,46 @@ if [ "$(echo ${VERBOSE} | tr '[:upper:]' '[:lower:]')" = 'yes' ]; then
 fi
 set -e                          # Abort on errors
 
-if [ -z "${LIBJPEG_DIR}" ]; then
+
+################################################################################
+# Search
+################################################################################
+
+if [ -z "${LIBJPEG_DIR}" \
+     -o "$(echo "${LIBJPEG_DIR}" | tr '[a-z]' '[A-Z]')" = 'NO_BUILD' ] 
+then
     echo "BEGIN MESSAGE"
     echo "LIBJPEG selected, but LIBJPEG_DIR not set. Checking some places..."
     echo "END MESSAGE"
     
-    FILES="include/jpeglib.h"
-    DIRS="/usr /usr/local ${HOME}"
+    DIRS="/usr /usr/local /usr/local/packages /usr/local/apps /opt/local ${HOME} c:/packages"
     for dir in $DIRS; do
-        LIBJPEG_DIR="$dir"
-        for file in $FILES; do
-            if [ ! -r "$dir/$file" ]; then
-                unset LIBJPEG_DIR
+        # libraries might have different file extensions
+        for libext in a so dylib; do
+            # libraries can be in /lib or /lib64
+            for libdir in lib64 lib/x86_64-linux-gnu lib lib/i386-linux-gnu; do
+                FILES="include/jpeglib.h $libdir/libjpeg.$libext"
+                # assume this is the one and check all needed files
+                LIBJPEG_DIR="$dir"
+                for file in $FILES; do
+                    # discard this directory if one file was not found
+                    if [ ! -r "$dir/$file" ]; then
+                        echo "$dir/$file"
+                        unset LIBJPEG_DIR
+                        break
+                    fi
+                done
+                # don't look further if all files have been found
+                if [ -n "$LIBJPEG_DIR" ]; then
+                    break
+                fi
+            done
+            # don't look further if all files have been found
+            if [ -n "$LIBJPEG_DIR" ]; then
                 break
             fi
         done
+        # don't look further if all files have been found
         if [ -n "$LIBJPEG_DIR" ]; then
             break
         fi
