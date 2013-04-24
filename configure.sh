@@ -16,7 +16,7 @@ set -e                          # Abort on errors
 # Search
 ################################################################################
 
-if [ -z "${LIBJPEG_DIR}" ] then
+if [ -z "${LIBJPEG_DIR}" ]; then
     echo "BEGIN MESSAGE"
     echo "LIBJPEG selected, but LIBJPEG_DIR not set. Checking some places..."
     echo "END MESSAGE"
@@ -63,6 +63,7 @@ if [ -z "${LIBJPEG_DIR}" ] then
         echo "END MESSAGE"
     fi
 fi
+
 
 
 ################################################################################
