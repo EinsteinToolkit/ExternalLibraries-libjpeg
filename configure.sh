@@ -97,7 +97,7 @@ then
     # Set locations
     THORN=libjpeg
     NAME=jpeg-8c
-    SRCDIR=$(dirname $0)
+    SRCDIR="$(dirname $0)"
     BUILD_DIR=${SCRATCH_BUILD}/build/${THORN}
     if [ -z "${LIBJPEG_INSTALL_DIR}" ]; then
         INSTALL_DIR=${SCRATCH_BUILD}/external/${THORN}
@@ -180,18 +180,15 @@ fi
 ################################################################################
 
 # Set options
-if [ "${LIBJPEG_DIR}" = '/usr' -o "${LIBJPEG_DIR}" = '/usr/local' ]; then
-    LIBJPEG_INC_DIRS=''
-    LIBJPEG_LIB_DIRS=''
-else
-    LIBJPEG_INC_DIRS="${LIBJPEG_DIR}/include"
-    LIBJPEG_LIB_DIRS="${LIBJPEG_DIR}/lib"
-fi
+LIBJPEG_INC_DIRS="${LIBJPEG_DIR}/include"
+LIBJPEG_LIB_DIRS="${LIBJPEG_DIR}/lib"
 LIBJPEG_LIBS='jpeg'
+
+LIBJPEG_INC_DIRS="$(${CCTK_HOME}/lib/sbin/strip-incdirs.sh ${LIBJPEG_INC_DIRS})"
+LIBJPEG_LIB_DIRS="$(${CCTK_HOME}/lib/sbin/strip-libdirs.sh ${LIBJPEG_LIB_DIRS})"
 
 # Pass options to Cactus
 echo "BEGIN MAKE_DEFINITION"
-echo "HAVE_LIBJPEG     = 1"
 echo "LIBJPEG_DIR      = ${LIBJPEG_DIR}"
 echo "LIBJPEG_INC_DIRS = ${LIBJPEG_INC_DIRS}"
 echo "LIBJPEG_LIB_DIRS = ${LIBJPEG_LIB_DIRS}"
