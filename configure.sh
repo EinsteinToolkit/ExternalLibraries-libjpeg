@@ -18,14 +18,14 @@ set -e                          # Abort on errors
 
 if [ -z "${LIBJPEG_DIR}" ]; then
     echo "BEGIN MESSAGE"
-    echo "LIBJPEG selected, but LIBJPEG_DIR not set. Checking some places..."
+    echo "libjpeg selected, but LIBJPEG_DIR not set. Checking some places..."
     echo "END MESSAGE"
     
     DIRS="/usr /usr/local /usr/local/packages /usr/local/apps /opt/local ${HOME} c:/packages"
     for dir in $DIRS; do
         # libraries might have different file extensions
-        for libext in a so dylib; do
-            # libraries can be in /lib or /lib64
+        for libext in a dll dll.a dylib lib so; do
+            # libraries can be in lib or lib64 (or libx32?)
             for libdir in lib64 lib/x86_64-linux-gnu lib lib/i386-linux-gnu lib/arm-linux-gnueabihf; do
                 FILES="include/jpeglib.h $libdir/libjpeg.$libext"
                 # assume this is the one and check all needed files
@@ -55,11 +55,11 @@ if [ -z "${LIBJPEG_DIR}" ]; then
     
     if [ -z "$LIBJPEG_DIR" ]; then
         echo "BEGIN MESSAGE"
-        echo "LIBJPEG not found"
+        echo "libjpeg not found"
         echo "END MESSAGE"
     else
         echo "BEGIN MESSAGE"
-        echo "Found LIBJPEG in ${LIBJPEG_DIR}"
+        echo "Found libjpeg in ${LIBJPEG_DIR}"
         echo "END MESSAGE"
     fi
 fi
