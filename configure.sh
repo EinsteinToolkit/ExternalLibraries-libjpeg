@@ -147,7 +147,9 @@ then
 
         echo "libjpeg: Configuring..."
         cd ${NAME}
-        ./configure --prefix=${LIBJPEG_DIR} --enable-shared=no
+        # we force libdir so that it does not switch between lib and lib64 on
+        # some archs which is annoying since we use it later on
+        ./configure --prefix=${LIBJPEG_DIR} --enable-shared=no --libdir=${LIBJPEG_DIR}/lib
         
         echo "libjpeg: Building..."
         ${MAKE}
