@@ -147,9 +147,13 @@ then
 
         echo "libjpeg: Configuring..."
         cd ${NAME}
+        if [ "x${GSL_CROSS_COMPILE}" = xyes ]; then
+          CROSS_OPTIONS="--host ${CPU}-${VENDOR}-${OS}"
+        fi
+
         # we force libdir so that it does not switch between lib and lib64 on
         # some archs which is annoying since we use it later on
-        ./configure --prefix=${LIBJPEG_DIR} --enable-shared=no --libdir=${LIBJPEG_DIR}/lib
+        ./configure --prefix=${LIBJPEG_DIR} --enable-shared=no --libdir=${LIBJPEG_DIR}/lib ${CROSS_OPTIONS:-}
         
         echo "libjpeg: Building..."
         ${MAKE}
