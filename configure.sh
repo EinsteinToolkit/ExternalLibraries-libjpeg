@@ -10,60 +10,25 @@ if [ "$(echo ${VERBOSE} | tr '[:upper:]' '[:lower:]')" = 'yes' ]; then
 fi
 set -e                          # Abort on errors
 
-
+. $CCTK_HOME/lib/make/bash_utils.sh
 
 ################################################################################
 # Search
 ################################################################################
 
-if [ -z "${LIBJPEG_DIR}" ]; then
-    echo "BEGIN MESSAGE"
-    echo "libjpeg selected, but LIBJPEG_DIR not set. Checking some places..."
-    echo "END MESSAGE"
-    
-    DIRS="/usr /usr/local /usr/local/packages /usr/local/apps /opt/local ${HOME} c:/packages"
-    for dir in $DIRS; do
-        # libraries might have different file extensions
-        for libext in a dll dll.a dylib lib so; do
-            # libraries can be in lib or lib64 (or libx32?)
-            for libdir in lib64 lib/x86_64-linux-gnu lib lib/i386-linux-gnu lib/arm-linux-gnueabihf; do
-                FILES="include/jpeglib.h $libdir/libjpeg.$libext"
-                # assume this is the one and check all needed files
-                LIBJPEG_DIR="$dir"
-                for file in $FILES; do
-                    # discard this directory if one file was not found
-                    if [ ! -r "$dir/$file" ]; then
-                        unset LIBJPEG_DIR
-                        break
-                    fi
-                done
-                # don't look further if all files have been found
-                if [ -n "$LIBJPEG_DIR" ]; then
-                    break
-                fi
-            done
-            # don't look further if all files have been found
-            if [ -n "$LIBJPEG_DIR" ]; then
-                break
-            fi
-        done
-        # don't look further if all files have been found
-        if [ -n "$LIBJPEG_DIR" ]; then
-            break
-        fi
-    done
-    
-    if [ -z "$LIBJPEG_DIR" ]; then
-        echo "BEGIN MESSAGE"
-        echo "libjpeg not found"
-        echo "END MESSAGE"
-    else
-        echo "BEGIN MESSAGE"
-        echo "Found libjpeg in ${LIBJPEG_DIR}"
-        echo "END MESSAGE"
-    fi
+# Take care of requests to build the library in any case
+LIBJPEG_DIR_INPUT=$LIBJPEG_DIR
+if [ "$(echo "${LIBJPEG_DIR}" | tr '[a-z]' '[A-Z]')" = 'BUILD' ]; then
+    LIBJPEG_BUILD=yes
+    LIBJPEG_DIR=
+else
+    LIBJPEG_BUILD=
 fi
 
+# Try to find the library if build isn't explicitly requested
+if [ -z "${LIBJPEG_BUILD}" ]; then
+    find_lib LIBJPEG jpeg 1 1.0 "jpeg" "jpeglib.h" "${LIBJPEG_DIR_INPUT}"
+fi
 
 
 ################################################################################
@@ -175,6 +140,11 @@ then
             echo 'END ERROR'
             exit 1
         fi
+
+        # Set options
+        LIBJPEG_INC_DIRS="${LIBJPEG_DIR}/include"
+        LIBJPEG_LIB_DIRS="${LIBJPEG_DIR}/lib"
+        LIBJPEG_LIBS='jpeg'
     fi
     
 fi
@@ -184,14 +154,6 @@ fi
 ################################################################################
 # Configure Cactus
 ################################################################################
-
-# Set options
-LIBJPEG_INC_DIRS="${LIBJPEG_DIR}/include"
-LIBJPEG_LIB_DIRS="${LIBJPEG_DIR}/lib"
-LIBJPEG_LIBS='jpeg'
-
-LIBJPEG_INC_DIRS="$(${CCTK_HOME}/lib/sbin/strip-incdirs.sh ${LIBJPEG_INC_DIRS})"
-LIBJPEG_LIB_DIRS="$(${CCTK_HOME}/lib/sbin/strip-libdirs.sh ${LIBJPEG_LIB_DIRS})"
 
 # Pass options to Cactus
 echo "BEGIN MAKE_DEFINITION"
