@@ -74,6 +74,11 @@ then
     fi
     DONE_FILE=${SCRATCH_BUILD}/done/${THORN}
     LIBJPEG_DIR=${INSTALL_DIR}
+
+    # Set options
+    LIBJPEG_INC_DIRS="${LIBJPEG_DIR}/include"
+    LIBJPEG_LIB_DIRS="${LIBJPEG_DIR}/lib"
+    LIBJPEG_LIBS='jpeg'
     
     if [ -e ${DONE_FILE} -a ${DONE_FILE} -nt ${SRCDIR}/dist/${NAME}.tar.gz \
                          -a ${DONE_FILE} -nt ${SRCDIR}/configure.sh ]
@@ -136,11 +141,6 @@ then
             echo 'END ERROR'
             exit 1
         fi
-
-        # Set options
-        LIBJPEG_INC_DIRS="${LIBJPEG_DIR}/include"
-        LIBJPEG_LIB_DIRS="${LIBJPEG_DIR}/lib"
-        LIBJPEG_LIBS='jpeg'
     fi
     
 fi
