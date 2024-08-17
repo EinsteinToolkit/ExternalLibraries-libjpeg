@@ -61,7 +61,7 @@ then
 
     # Set locations
     THORN=libjpeg
-    NAME=jpeg-8c
+    NAME=jpeg-9f
     SRCDIR="$(dirname $0)"
     BUILD_DIR=${SCRATCH_BUILD}/build/${THORN}
     if [ -z "${LIBJPEG_INSTALL_DIR}" ]; then
